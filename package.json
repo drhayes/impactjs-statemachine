@@ -1,0 +1,36 @@
+{
+  "name": "impactjs-statemachine",
+  "version": "0.1.0",
+  "description": "State machine plugin for ImpactJS.",
+  "homepage": "https://github.com/drhayes/impactjs-statemachine",
+  "author": "David Hayes <drhayes@gmail.com> (http://davidrhayes.com)",
+  "keywords": [
+    "impactjs"
+  ],
+  "main": "./stateMachine.js",
+  "engines": {
+    "node": "*"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/drhayes/impactjs-statemachine.git"
+  },
+  "bugs": {
+    "url": "https://github.com/drhayes/impactjs-statemachine/issues"
+  },
+  "licenses": [
+    {
+      "type": "MIT"
+    }
+  ],
+  "devDependencies": {
+    "mocha": "*",
+    "grunt": "~0.4.1",
+    "grunt-contrib-jshint": "~0.3.0",
+    "grunt-simple-mocha": "~0.3.2",
+    "grunt-contrib-watch": "~0.3.1"
+  },
+  "scripts": {
+    "test": "grunt travis --verbose"
+  }
+}
