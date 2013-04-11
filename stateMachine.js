@@ -50,16 +50,22 @@ ig.module(
       }
       var state = this.state(this.currentState);
       if (this.previousState !== this.currentState) {
-        state.enter();
+        if (state.enter) {
+          state.enter();
+        }
         this.previousState = this.currentState;
       }
-      state.update();
+      if (state.update) {
+        state.update();
+      }
       // Iterate through transitions.
       for (var name in this.transitions) {
         var transition = this.transitions[name];
         if (transition.fromState === this.currentState &&
             transition.predicate()) {
-          state.exit();
+          if (state.exit) {
+            state.exit();
+          }
           this.currentState = transition.toState;
           return;
         }

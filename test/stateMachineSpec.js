@@ -115,6 +115,18 @@ describe('StateMachine', function() {
       assert(definition.update.calledTwice);
     });
 
+    it('does not call enter on state if it does not exist', function() {
+      definition.enter = null;
+      sm.update();
+      assert(definition.update.called);
+    });
+
+    it('does not call update on state if it does not exist', function() {
+      definition.update = null;
+      sm.update();
+      assert(definition.enter.called);
+    });
+
     it('iterates through transitions, seeing if they should fire', function() {
       // Add another couple of states to play with.
       sm.state('doggyhat', {});
@@ -165,6 +177,18 @@ describe('StateMachine', function() {
       assert(definition2.update.called);
     });
 
+    it('does not call exit on state if it does not exist', function() {
+      sm.state('doggyhat', {});
+      var predicate1 = sinon.stub().returns(true);
+      sm.transition('one', 'catpants', 'doggyhat', predicate1);
+
+      definition.exit = null;
+
+      sm.update();
+      assert(definition.enter.called);
+      assert(definition.update.called);
+    });
+
     it('early exits after finding one transition', function() {
       var definition2 = {
         enter: sinon.spy(),
@@ -210,6 +234,5 @@ describe('StateMachine', function() {
       sm.update();
       assert(sm.currentState === 'doggyhat');
     });
-
   });
 });
