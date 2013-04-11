@@ -20,4 +20,36 @@ var ig = global.ig = {
 var StateMachine = require('../stateMachine.js').StateMachine;
 
 describe('StateMachine', function() {
+  var sm;
+
+  beforeEach(function() {
+    sm = new StateMachine();
+  });
+
+  it('lets you define states', function() {
+    assert(!sm.states.catpants);
+    sm.state('catpants', {
+      update: function() {}
+    });
+    assert(sm.states.catpants);
+  });
+
+  it('retrieves states by name', function() {
+    var definition = {
+      update: function() {}
+    };
+    sm.state('catpants', definition);
+    assert(sm.state('catpants') === definition);
+  });
+
+  it('sets first defined state as initialState', function() {
+    assert(!sm.initialState);
+    sm.state('catpants', {
+      update: function() {}
+    });
+    sm.state('doggyhat', {
+      update: function() {}
+    });
+    assert(sm.initialState === 'catpants');
+  });
 });
