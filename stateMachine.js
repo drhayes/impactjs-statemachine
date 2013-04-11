@@ -22,6 +22,24 @@ ig.module(
         this.initialState = name;
       }
     };
+
+    this.transition = function(name, fromState, toState, predicate) {
+      if (!fromState && !toState && !predicate) {
+        return this.transitions[name];
+      }
+      if (!this.states[fromState]) {
+        throw new Error('Missing from state: ' + fromState);
+      }
+      if (!this.states[toState]) {
+        throw new Error('Missing to state: ' + toState);
+      }
+      this.transitions[name] = {
+        name: name,
+        fromState: fromState,
+        toState: toState,
+        predicate: predicate
+      };
+    };
   };
 
 }).bind(this, this));

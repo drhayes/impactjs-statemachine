@@ -52,4 +52,47 @@ describe('StateMachine', function() {
     });
     assert(sm.initialState === 'catpants');
   });
+
+  it('lets you define transitions', function() {
+    assert(!sm.transitions.catpants);
+    // Must define states before defining transition.
+    sm.state('doggyhat', {});
+    sm.state('horsepoo', {});
+    sm.transition('catpants', 'doggyhat', 'horsepoo', function() {});
+    assert(sm.transitions.catpants);
+  });
+
+  it('retrieves transitions by name', function() {
+    // Must define states before defining transition.
+    sm.state('fromState', {});
+    sm.state('toState', {});
+    var predicate = function() {};
+    sm.transition('catpants', 'fromState', 'toState', predicate);
+    var transition = sm.transition('catpants');
+    assert(transition);
+    assert(transition.fromState === 'fromState');
+    assert(transition.toState === 'toState');
+    assert(transition.predicate === predicate);
+  });
+
+  it('verifies states exist before creating transition', function() {
+    assert(!sm.states.fromState);
+    assert(!sm.states.toState);
+    assert.throws(function() {
+      sm.transition('catpants', 'fromState', 'toState', function() {});
+    }, /fromState/);
+
+    // Define fromState.
+    sm.state('fromState', {});
+    assert.throws(function() {
+      sm.transition('catpants', 'fromState', 'toState', function() {});
+    }, /toState/);
+
+    // Define toState.
+    sm.state('toState', {});
+    assert.doesNotThrow(function() {
+      sm.transition('catpants', 'fromState', 'toState', function() {});
+    });
+
+  });
 });
