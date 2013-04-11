@@ -1,6 +1,7 @@
 /*global require: true, global: true, describe: true, beforeEach: true,
   it: true */
 var assert = require('assert');
+var sinon = require('sinon');
 
 // Fake the Impact global namespace with good enough definitions.
 var ig = global.ig = {
@@ -92,6 +93,122 @@ describe('StateMachine', function() {
     sm.state('toState', {});
     assert.doesNotThrow(function() {
       sm.transition('catpants', 'fromState', 'toState', function() {});
+    });
+  });
+
+  describe('update', function() {
+    var definition;
+
+    beforeEach(function() {
+      definition = {
+        enter: sinon.spy(),
+        update: sinon.spy(),
+        exit: sinon.spy()
+      };
+      sm.state('catpants', definition);
+    });
+
+    it('calls initialState.enter only on first call to update', function() {
+      sm.update();
+      sm.update();
+      assert(definition.enter.calledOnce);
+      assert(definition.update.calledTwice);
+    });
+
+    it('iterates through transitions, seeing if they should fire', function() {
+      // Add another couple of states to play with.
+      sm.state('doggyhat', {});
+      sm.state('horsepoo', {});
+      var predicate1 = sinon.stub().returns(false);
+      var predicate2 = sinon.stub().returns(false);
+      sm.transition('one', 'catpants', 'doggyhat', predicate1);
+      sm.transition('two', 'catpants', 'horsepoo', predicate2);
+
+      sm.update();
+      sm.update();
+      assert(predicate1.calledTwice);
+      assert(predicate2.calledTwice);
+    });
+
+    it('only calls predicates when they match the fromState', function() {
+      // Add a couple of states to play with.
+      sm.state('doggyhat', {});
+      sm.state('horsepoo', {});
+      var predicate1 = sinon.stub().returns(false);
+      var predicate2 = sinon.stub().returns(false);
+      sm.transition('one', 'catpants', 'doggyhat', predicate1);
+      sm.transition('two', 'doggyhat', 'horsepoo', predicate2);
+
+      sm.update();
+      assert(predicate1.calledOnce);
+      assert(!predicate2.called);
+    });
+
+    it('transitions to new state if predicate returns true', function() {
+      var definition2 = {
+        enter: sinon.spy(),
+        update: sinon.spy()
+      };
+      sm.state('doggyhat', definition2);
+      var predicate1 = sinon.stub().returns(true);
+      sm.transition('one', 'catpants', 'doggyhat', predicate1);
+
+      sm.update();
+      assert(definition.enter.called);
+      assert(definition.update.called);
+      assert(definition.exit.called);
+      assert(!definition2.enter.called);
+
+      sm.update();
+      assert(sm.currentState === 'doggyhat');
+      assert(definition2.enter.called);
+      assert(definition2.update.called);
+    });
+
+    it('early exits after finding one transition', function() {
+      var definition2 = {
+        enter: sinon.spy(),
+        update: sinon.spy()
+      };
+      var definition3 = {
+        enter: sinon.spy(),
+        update: sinon.spy()
+      };
+      sm.state('doggyhat', definition2);
+      sm.state('horsepoo', definition3);
+
+      var predicate1 = sinon.stub().returns(true);
+      var predicate2 = sinon.stub().returns(true);
+      sm.transition('one', 'catpants', 'doggyhat', predicate1);
+      sm.transition('two', 'catpants', 'horsepoo', predicate2);
+
+      // This call should transition to doggyhat.
+      sm.update();
+      assert(sm.currentState === 'doggyhat');
+    });
+
+    it('does not double-transition', function() {
+      // Brief bug where it would jump from state1->state2->state3 because
+      // of how the transition logic worked. Related to early exit above.
+      var definition2 = {
+        enter: sinon.spy(),
+        update: sinon.spy()
+      };
+      var definition3 = {
+        enter: sinon.spy(),
+        update: sinon.spy()
+      };
+      sm.state('doggyhat', definition2);
+      sm.state('horsepoo', definition3);
+
+      var predicate1 = sinon.stub().returns(true);
+      var predicate2 = sinon.stub().returns(true);
+      sm.transition('one', 'catpants', 'doggyhat', predicate1);
+      sm.transition('two', 'doggyhat', 'horsepoo', predicate2);
+
+      // This call should transition to doggyhat.
+      sm.update();
+      assert(sm.currentState === 'doggyhat');
     });
 
   });

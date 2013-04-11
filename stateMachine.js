@@ -11,7 +11,10 @@ ig.module(
   global.StateMachine = function() {
     this.states = {};
     this.transitions = {};
+    // Track states by name.
     this.initialState = null;
+    this.currentState = null;
+    this.previousState = null;
 
     this.state = function(name, definition) {
       if (!definition) {
@@ -39,6 +42,28 @@ ig.module(
         toState: toState,
         predicate: predicate
       };
+    };
+
+    this.update = function() {
+      if (!this.currentState) {
+        this.currentState = this.initialState;
+      }
+      var state = this.state(this.currentState);
+      if (this.previousState !== this.currentState) {
+        state.enter();
+        this.previousState = this.currentState;
+      }
+      state.update();
+      // Iterate through transitions.
+      for (var name in this.transitions) {
+        var transition = this.transitions[name];
+        if (transition.fromState === this.currentState &&
+            transition.predicate()) {
+          state.exit();
+          this.currentState = transition.toState;
+          return;
+        }
+      }
     };
   };
 
