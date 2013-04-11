@@ -1,5 +1,7 @@
 # impactjs-statemachine
 
+[![Build Status](https://travis-ci.org/drhayes/impactjs-statemachine.png)](https://travis-ci.org/drhayes/impactjs-statemachine)
+
 Provide a state machine implementation for use in ImpactJS games through one class, `StateMachine`.
 
 ## Overview
