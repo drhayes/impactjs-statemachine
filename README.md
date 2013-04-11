@@ -58,8 +58,8 @@ All methods are called within the context of the state machine instance; any pro
 
 #### `transition`
 
-	`transition('transitionName', 'fromStateName', 'toStateName', function() {})`
-	`transition('transitionName')`
+	transition('transitionName', 'fromStateName', 'toStateName', function() {})
+	transition('transitionName')
 
 Define a transition between two states with the given name. Retrieve the named transition.
 
