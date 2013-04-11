@@ -235,4 +235,62 @@ describe('StateMachine', function() {
       assert(sm.currentState === 'doggyhat');
     });
   });
+
+  describe('end-to-end', function() {
+    it('works for simple case', function() {
+      var sm = new StateMachine();
+
+      // Define attacking state.
+      var counter = 0;
+      var fleeing = false;
+      sm.state('attacking', {
+        enter: function() {
+          counter = 42;
+        },
+        update: function() {
+          counter += 1;
+        },
+        exit: function() {
+          fleeing = true;
+        }
+      });
+
+      // Define running state.
+      var distance = 0;
+      sm.state('running', {
+        enter: function() {
+          counter = 0;
+        },
+        update: function() {
+          distance += 1;
+        }
+      });
+
+      // Define transition.
+      sm.transition('cowardice', 'attacking', 'running', function() {
+        return counter > 44;
+      });
+
+      // Step-by-step verification.
+      assert(counter === 0);
+      assert(distance === 0);
+
+      sm.update();
+      assert(counter === 43);
+      assert(!fleeing);
+
+      sm.update();
+      assert(counter === 44);
+      assert(!fleeing);
+
+      sm.update();
+      assert(counter === 45);
+      assert(fleeing);
+
+      sm.update();
+      assert(counter === 0);
+      assert(distance === 1);
+      assert(fleeing);
+    });
+  });
 });
