@@ -63,6 +63,26 @@ describe('StateMachine', function() {
     assert(sm.transitions.catpants);
   });
 
+  it('does not require named transitions', function() {
+    var counter = 0;
+    for (var key in sm.transitions) {
+      counter += 1;
+    }
+    assert(!counter);
+
+    sm.state('catpants', {});
+    sm.state('doggyhat', {});
+
+    sm.transition('catpants', 'doggyhat', function() {});
+
+    counter = 0;
+    for (key in sm.transitions) {
+      counter += 1;
+    }
+    assert(counter === 1);
+    assert(!sm.transitions.catpants);
+  });
+
   it('retrieves transitions by name', function() {
     // Must define states before defining transition.
     sm.state('fromState', {});
