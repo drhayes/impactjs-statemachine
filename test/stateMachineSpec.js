@@ -59,7 +59,8 @@ describe('StateMachine', function() {
     // Must define states before defining transition.
     sm.state('doggyhat', {});
     sm.state('horsepoo', {});
-    sm.transition('catpants', 'doggyhat', 'horsepoo', function() {});
+    var transition = sm.transition('catpants', 'doggyhat', 'horsepoo', function() {});
+    assert(transition);
     assert(sm.transitions.catpants);
   });
 
@@ -73,7 +74,9 @@ describe('StateMachine', function() {
     sm.state('catpants', {});
     sm.state('doggyhat', {});
 
-    sm.transition('catpants', 'doggyhat', function() {});
+    var transition = sm.transition('catpants', 'doggyhat', function() {});
+    // We got something back, right?
+    assert(transition);
 
     counter = 0;
     for (key in sm.transitions) {

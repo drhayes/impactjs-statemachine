@@ -46,12 +46,14 @@ ig.module(
       if (!this.states[toState]) {
         throw new Error('Missing to state: ' + toState);
       }
-      this.transitions[name] = {
+      var transition = {
         name: name,
         fromState: fromState,
         toState: toState,
         predicate: predicate
       };
+      this.transitions[name] = transition;
+      return transition;
     };
 
     this.update = function() {
