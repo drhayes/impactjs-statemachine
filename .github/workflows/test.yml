@@ -1,0 +1,20 @@
+name: Test the lib
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+        - uses: actions/checkout@v1
+
+        - name: Use Node.js 14.16.1
+          uses: actions/setup-node@v1
+          with:
+            node-version: 14.16.1
+
+        - name: Installing dependencies
+          run: npm install
+
+        - name: Test the library
+          run: npm test
