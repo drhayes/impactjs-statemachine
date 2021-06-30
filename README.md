@@ -1,5 +1,7 @@
 # impactjs-statemachine
 
+[![Test the lib](https://github.com/drhayes/impactjs-statemachine/actions/workflows/test.yml/badge.svg)](https://github.com/drhayes/impactjs-statemachine/actions/workflows/test.yml)
+
 Provide a state machine implementation for use in ImpactJS games through one class, `StateMachine`.
 
 ## Overview
