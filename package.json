@@ -24,7 +24,7 @@
     }
   ],
   "devDependencies": {
-    "mocha": "9.0.1",
+    "mocha": "9.2.2",
     "sinon": "1.6.0"
   },
   "scripts": {
